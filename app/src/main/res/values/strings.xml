@@ -44,4 +44,6 @@
     <string name="create_new_entry_widget">Create New Entry Widget</string>
     <string name="you_don_t_have_any_topics_yet">You don\'t have any topics yet!</string>
     <string name="audio_recording_was_too_short">Audio recording was too short</string>
+    <string name="clear_selections">Clear selections</string>
+    <string name="create_entry">Create \'%s\'</string>
 </resources>
