@@ -32,7 +32,6 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import com.plcoding.echojournal.R
-import com.plcoding.echojournal.core.presentation.designsystem.dropdowns.Selectable.Companion.asUnselectedItems
 import com.plcoding.echojournal.core.presentation.designsystem.theme.EchoJournalTheme
 
 @Composable
@@ -66,8 +65,10 @@ fun <T> SelectableDropDownOptionsMenu(
                     .padding(6.dp),
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                items(items,
-                    key = { key(it.item) }) { item ->
+                items(
+                    items = items,
+                    key = { key(it.item) }
+                ) { item ->
                     Row(
                         modifier = Modifier
                             .animateItem()
@@ -95,7 +96,7 @@ fun <T> SelectableDropDownOptionsMenu(
                             Icon(
                                 imageVector = Icons.Default.Check,
                                 contentDescription = null,
-                                tint = MaterialTheme.colorScheme.primary
+                                tint = MaterialTheme.colorScheme.primary,
                             )
                         }
                     }

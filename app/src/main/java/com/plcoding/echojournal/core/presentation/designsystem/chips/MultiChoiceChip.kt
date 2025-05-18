@@ -1,6 +1,5 @@
 package com.plcoding.echojournal.core.presentation.designsystem.chips
 
-import android.inputmethodservice.Keyboard
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
@@ -18,7 +17,6 @@ import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -27,13 +25,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.plcoding.echojournal.R
 import com.plcoding.echojournal.core.presentation.designsystem.theme.EchoJournalTheme
-import com.plcoding.echojournal.core.presentation.designsystem.theme.Gray6
 
 @Composable
 fun MultiChoiceChip(
@@ -73,11 +69,10 @@ fun MultiChoiceChip(
             .background(containerColor)
             .clickable(onClick = onClick)
             .animateContentSize()
-//            .padding(horizontal = 8.dp, vertical = 4.dp)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
             modifier = Modifier
                 .padding(8.dp)
                 .align(Alignment.Center)

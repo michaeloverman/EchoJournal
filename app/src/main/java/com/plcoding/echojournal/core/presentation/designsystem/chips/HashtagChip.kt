@@ -39,11 +39,7 @@ fun HashtagChip(
             horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             Text("#", color = MaterialTheme.colorScheme.onSurfaceVariant)
-            Text(
-                text = text,
-
-                )
-
+            Text(text = text)
             trailingIcon?.invoke()
         }
     }
