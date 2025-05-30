@@ -30,7 +30,6 @@ fun EchoMoodPlayer(
     moodUi: MoodUi?,
     playbackState: PlaybackState,
     playerProgress: () -> Float,
-    durationPlayed: Duration,
     totalPlaybackDuration: Duration,
     powerRations: List<Float>,
     onPlayClick: () -> Unit,
@@ -39,8 +38,8 @@ fun EchoMoodPlayer(
     amplitudeBarWidth: Dp = 5.dp,
     amplitudeBarSpacing: Dp = 4.dp
 ) {
-    val formattedDuration = remember(durationPlayed, totalPlaybackDuration) {
-        "${durationPlayed.formatMMSS()}/${totalPlaybackDuration.formatMMSS()}"
+    val formattedDuration = remember(playerProgress, totalPlaybackDuration) {
+        "${(totalPlaybackDuration * playerProgress().toDouble()).formatMMSS()}/${totalPlaybackDuration.formatMMSS()}"
     }
 
     Surface(
@@ -90,7 +89,6 @@ private fun EchoMoodPlayerPreview() {
             moodUi = MoodUi.STRESSED,
             playbackState = PlaybackState.PLAYING,
             playerProgress = { .5f },
-            durationPlayed = 2.minutes,
             totalPlaybackDuration = 5.minutes,
             powerRations = ratios,
             onPlayClick = {},
