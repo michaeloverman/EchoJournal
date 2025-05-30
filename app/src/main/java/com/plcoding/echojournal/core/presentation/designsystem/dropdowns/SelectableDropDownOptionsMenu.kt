@@ -42,7 +42,7 @@ fun <T> SelectableDropDownOptionsMenu(
     key: (T) -> Any,
     onItemClick: (Selectable<T>) -> Unit,
     modifier: Modifier = Modifier,
-    leadingIcon: (@Composable () -> Unit)? = null,
+    leadingIcon: (@Composable (T) -> Unit)? = null,
     dropDownOffset: IntOffset = IntOffset.Zero,
     maxDropDownHeight: Dp = Dp.Unspecified,
     dropDownExtras: SelectableOptionExtras? = null
@@ -68,31 +68,31 @@ fun <T> SelectableDropDownOptionsMenu(
                 items(
                     items = items,
                     key = { key(it.item) }
-                ) { item ->
+                ) { selectable ->
                     Row(
                         modifier = Modifier
                             .animateItem()
                             .fillMaxWidth()
                             .clip(RoundedCornerShape(8.dp))
                             .background(
-                                color = if (item.selected) {
+                                color = if (selectable.selected) {
                                     MaterialTheme.colorScheme.surfaceTint.copy(alpha = 0.05f)
                                 } else MaterialTheme.colorScheme.surface
                             )
-                            .clickable { onItemClick(item) }
+                            .clickable { onItemClick(selectable) }
                             .padding(8.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        leadingIcon?.invoke()
+                        leadingIcon?.invoke(selectable.item)
 
                         Text(
-                            text = itemDisplayText(item.item),
+                            text = itemDisplayText(selectable.item),
                             modifier = Modifier
                                 .weight(1f)
                         )
 
-                        if (item.selected) {
+                        if (selectable.selected) {
                             Icon(
                                 imageVector = Icons.Default.Check,
                                 contentDescription = null,

@@ -1,4 +1,4 @@
-package com.plcoding.echojournal.core.presentation.echos.presentation.echos.components
+package com.plcoding.echojournal.echos.presentation.echos.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement

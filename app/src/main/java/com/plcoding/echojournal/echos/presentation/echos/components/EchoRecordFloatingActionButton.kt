@@ -1,4 +1,4 @@
-package com.plcoding.echojournal.core.presentation.echos.presentation.echos.components
+package com.plcoding.echojournal.echos.presentation.echos.components
 
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons

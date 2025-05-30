@@ -1,6 +1,4 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
-
-package com.plcoding.echojournal.core.presentation.echos.presentation.echos.components
+package com.plcoding.echojournal.echos.presentation.echos.components
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Settings
@@ -19,6 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.plcoding.echojournal.R
 import com.plcoding.echojournal.core.presentation.designsystem.theme.EchoJournalTheme
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EchosTopBar(
     onSettingsClick: () -> Unit,
