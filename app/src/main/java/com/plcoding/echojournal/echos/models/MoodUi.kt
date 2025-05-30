@@ -6,6 +6,9 @@ import com.plcoding.echojournal.R
 import com.plcoding.echojournal.core.presentation.designsystem.theme.Excited25
 import com.plcoding.echojournal.core.presentation.designsystem.theme.Excited35
 import com.plcoding.echojournal.core.presentation.designsystem.theme.Excited80
+import com.plcoding.echojournal.core.presentation.designsystem.theme.MoodPrimary25
+import com.plcoding.echojournal.core.presentation.designsystem.theme.MoodPrimary35
+import com.plcoding.echojournal.core.presentation.designsystem.theme.MoodPrimary80
 import com.plcoding.echojournal.core.presentation.designsystem.theme.Neutral25
 import com.plcoding.echojournal.core.presentation.designsystem.theme.Neutral35
 import com.plcoding.echojournal.core.presentation.designsystem.theme.Neutral80
@@ -96,4 +99,12 @@ data class MoodColorSet(
     val vivid: Color,
     val desaturated: Color,
     val faded: Color
-)
+) {
+    companion object {
+        val UNDEFINED_COLOR_SET = MoodColorSet(
+            vivid = MoodPrimary80,
+            desaturated = MoodPrimary35,
+            faded = MoodPrimary25
+        )
+    }
+}
