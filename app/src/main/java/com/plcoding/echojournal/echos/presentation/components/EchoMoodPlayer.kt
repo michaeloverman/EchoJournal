@@ -18,9 +18,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.plcoding.echojournal.core.presentation.designsystem.theme.EchoJournalTheme
 import com.plcoding.echojournal.core.presentation.util.formatMMSS
-import com.plcoding.echojournal.echos.models.MoodColorSet
-import com.plcoding.echojournal.echos.models.MoodUi
 import com.plcoding.echojournal.echos.presentation.echos.models.PlaybackState
+import com.plcoding.echojournal.echos.presentation.echos.models.TrackSizeInfo
+import com.plcoding.echojournal.echos.presentation.models.MoodColorSet
+import com.plcoding.echojournal.echos.presentation.models.MoodUi
 import kotlin.random.Random
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
@@ -34,6 +35,7 @@ fun EchoMoodPlayer(
     powerRations: List<Float>,
     onPlayClick: () -> Unit,
     onPauseClick: () -> Unit,
+    onTrackSizeAvailable: (TrackSizeInfo) -> Unit,
     modifier: Modifier = Modifier,
     amplitudeBarWidth: Dp = 5.dp,
     amplitudeBarSpacing: Dp = 4.dp
@@ -88,11 +90,12 @@ private fun EchoMoodPlayerPreview() {
         EchoMoodPlayer(
             moodUi = MoodUi.STRESSED,
             playbackState = PlaybackState.PLAYING,
-            playerProgress = { .5f },
+            playerProgress = { .375f },
             totalPlaybackDuration = 5.minutes,
             powerRations = ratios,
             onPlayClick = {},
-            onPauseClick = {}
+            onPauseClick = {},
+            onTrackSizeAvailable = {}
         )
     }
 }

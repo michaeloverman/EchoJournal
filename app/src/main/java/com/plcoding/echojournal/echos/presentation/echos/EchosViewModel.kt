@@ -4,10 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.plcoding.echojournal.R
 import com.plcoding.echojournal.core.presentation.designsystem.dropdowns.Selectable
-import com.plcoding.echojournal.echos.models.MoodUi
+import com.plcoding.echojournal.core.presentation.util.UiText
 import com.plcoding.echojournal.echos.presentation.echos.models.EchoFilterChip
 import com.plcoding.echojournal.echos.presentation.echos.models.MoodChipContent
-import com.plcoding.echojournal.core.presentation.util.UiText
+import com.plcoding.echojournal.echos.presentation.models.MoodUi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine

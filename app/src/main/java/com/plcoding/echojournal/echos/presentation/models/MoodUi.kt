@@ -1,4 +1,4 @@
-package com.plcoding.echojournal.echos.models
+package com.plcoding.echojournal.echos.presentation.models
 
 import androidx.annotation.DrawableRes
 import androidx.compose.ui.graphics.Color

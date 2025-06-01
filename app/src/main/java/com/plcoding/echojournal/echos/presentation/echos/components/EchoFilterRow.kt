@@ -26,10 +26,10 @@ import com.plcoding.echojournal.core.presentation.designsystem.chips.MultiChoice
 import com.plcoding.echojournal.core.presentation.designsystem.dropdowns.Selectable
 import com.plcoding.echojournal.core.presentation.designsystem.dropdowns.SelectableDropDownOptionsMenu
 import com.plcoding.echojournal.core.presentation.util.UiText
-import com.plcoding.echojournal.echos.models.MoodUi
 import com.plcoding.echojournal.echos.presentation.echos.EchosAction
 import com.plcoding.echojournal.echos.presentation.echos.models.EchoFilterChip
 import com.plcoding.echojournal.echos.presentation.echos.models.MoodChipContent
+import com.plcoding.echojournal.echos.presentation.models.MoodUi
 
 @Composable
 fun EchoFilterRow(

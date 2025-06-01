@@ -17,8 +17,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.plcoding.echojournal.core.presentation.designsystem.theme.EchoJournalTheme
-import com.plcoding.echojournal.echos.models.MoodColorSet
-import com.plcoding.echojournal.echos.models.MoodUi
+import com.plcoding.echojournal.echos.presentation.models.MoodColorSet
+import com.plcoding.echojournal.echos.presentation.models.MoodUi
 import kotlin.random.Random
 
 @Composable
