@@ -69,7 +69,8 @@ fun EchoTimelineItem(
             echoUi = echoUi,
             onTrackSizeAvailable = onTrackSizeAvailable,
             onPlayClick = onPlayClick,
-            onPauseClick = onPauseClick
+            onPauseClick = onPauseClick,
+            modifier = Modifier.padding(vertical = 8.dp)
         )
     }
 }

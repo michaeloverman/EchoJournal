@@ -88,7 +88,10 @@ fun EchoCard(
                 )
             }
 
-            FlowRow(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
                 echoUi.topics.forEach {
                     HashtagChip(text = it)
                 }

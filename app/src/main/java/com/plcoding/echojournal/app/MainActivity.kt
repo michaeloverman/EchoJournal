@@ -1,4 +1,4 @@
-package com.plcoding.echojournal
+package com.plcoding.echojournal.app
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
