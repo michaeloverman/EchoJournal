@@ -5,23 +5,42 @@ import androidx.lifecycle.viewModelScope
 import com.plcoding.echojournal.R
 import com.plcoding.echojournal.core.presentation.designsystem.dropdowns.Selectable
 import com.plcoding.echojournal.core.presentation.util.UiText
+import com.plcoding.echojournal.echos.domain.recording.VoiceRecorder
+import com.plcoding.echojournal.echos.presentation.echos.models.AudioCaptureMethod
 import com.plcoding.echojournal.echos.presentation.echos.models.EchoFilterChip
 import com.plcoding.echojournal.echos.presentation.echos.models.MoodChipContent
+import com.plcoding.echojournal.echos.presentation.echos.models.RecordingState
 import com.plcoding.echojournal.echos.presentation.models.MoodUi
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.seconds
 
-class EchosViewModel : ViewModel() {
+class EchosViewModel(
+    val voiceRecorder: VoiceRecorder
+) : ViewModel() {
+
+    companion object {
+        private val MIN_RECORD_DURATION = 1.5.seconds
+    }
 
     private var hasLoadedInitialData = false
 
     private val selectedMoodFilters = MutableStateFlow<List<MoodUi>>(emptyList())
     private val selectedTopicFilters = MutableStateFlow<List<String>>(emptyList())
+
+    private val eventChannel = Channel<EchosEvent>()
+    val events = eventChannel.receiveAsFlow()
 
     private val _state = MutableStateFlow(EchosState())
     val state = _state
@@ -39,8 +58,16 @@ class EchosViewModel : ViewModel() {
 
     fun onAction(action: EchosAction) {
         when (action) {
-            EchosAction.OnFabClick -> {}
-            EchosAction.OnFabLongClick -> {}
+            EchosAction.OnFabClick -> {
+                requestAudioPermission()
+                _state.update { it.copy(currentCaptureMethod = AudioCaptureMethod.STANDARD) }
+            }
+
+            EchosAction.OnFabLongClick -> {
+                requestAudioPermission()
+                _state.update { it.copy(currentCaptureMethod = AudioCaptureMethod.QUICK) }
+            }
+
             EchosAction.OnSettingsClick -> {}
 
             is EchosAction.OnRemoveFilters -> {
@@ -49,19 +76,25 @@ class EchosViewModel : ViewModel() {
                     EchoFilterChip.TOPICS -> selectedTopicFilters.update { emptyList() }
                 }
             }
+
             EchosAction.OnMoodChipClick -> {
-                _state.update { it.copy(
-                    selectedEchoFilterChip =
-                        if (it.selectedEchoFilterChip == EchoFilterChip.MOODS) null
-                        else EchoFilterChip.MOODS
-                ) }
+                _state.update {
+                    it.copy(
+                        selectedEchoFilterChip =
+                            if (it.selectedEchoFilterChip == EchoFilterChip.MOODS) null
+                            else EchoFilterChip.MOODS
+                    )
+                }
             }
 
             EchosAction.OnTopicChipClick -> {
-                _state.update { it.copy(
-                    selectedEchoFilterChip =
-                    if (it.selectedEchoFilterChip == EchoFilterChip.TOPICS) null
-                    else EchoFilterChip.TOPICS) }
+                _state.update {
+                    it.copy(
+                        selectedEchoFilterChip =
+                            if (it.selectedEchoFilterChip == EchoFilterChip.TOPICS) null
+                            else EchoFilterChip.TOPICS
+                    )
+                }
             }
 
             EchosAction.OnDismissMoodDropdown,
@@ -78,8 +111,75 @@ class EchosViewModel : ViewModel() {
             }
 
             is EchosAction.OnEchoPlayClick -> {}
-            EchosAction.OnPauseClick -> {}
+            EchosAction.OnPauseAudioClick -> {}
             is EchosAction.OnTrackSizeAvailable -> {}
+
+            EchosAction.OnAudioPermissionGranted -> startRecording(AudioCaptureMethod.STANDARD)
+
+            EchosAction.OnPauseRecordingClick -> {
+                voiceRecorder.pause()
+                _state.update { it.copy(recordingState = RecordingState.PAUSED) }
+            }
+
+            EchosAction.OnCancelRecording -> {
+                voiceRecorder.cancel()
+                _state.update {
+                    it.copy(
+                        recordingState = RecordingState.NOT_RECORDING,
+                        currentCaptureMethod = null
+                    )
+                }
+            }
+
+            EchosAction.OnCompleteRecordingClick -> {
+                voiceRecorder.stop()
+                _state.update {
+                    it.copy(
+                        recordingState = RecordingState.NOT_RECORDING,
+                        currentCaptureMethod = null
+                    )
+                }
+
+                val details = voiceRecorder.recordingDetails.value
+                viewModelScope.launch {
+                    eventChannel.send(
+                        if (details.duration < MIN_RECORD_DURATION) EchosEvent.RecordingTooShort
+                        else EchosEvent.OnRecordingDone
+                    )
+                }
+            }
+
+            EchosAction.OnResumeRecordingClick -> {
+                voiceRecorder.resume()
+                _state.update { it.copy(recordingState = RecordingState.NORMAL_CAPTURE) }
+            }
+        }
+    }
+
+    private fun startRecording(method: AudioCaptureMethod) {
+        _state.update {
+            it.copy(
+                recordingState = when (method) {
+                    AudioCaptureMethod.STANDARD -> RecordingState.NORMAL_CAPTURE
+                    AudioCaptureMethod.QUICK -> RecordingState.QUICK_CAPTURE
+                }
+            )
+        }
+        voiceRecorder.start()
+
+        if (method == AudioCaptureMethod.STANDARD) {
+            voiceRecorder
+                .recordingDetails
+                .distinctUntilChangedBy { it.duration }
+                .map { it.duration }
+                .onEach { duration ->
+                    _state.update {
+                        it.copy(
+                            recordingElapsedDuration = duration
+                        )
+                    }
+                }
+                .launchIn(viewModelScope)
         }
     }
 
@@ -109,6 +209,10 @@ class EchosViewModel : ViewModel() {
                 )
             }
         }.launchIn(viewModelScope)
+    }
+
+    private fun requestAudioPermission() = viewModelScope.launch {
+        eventChannel.send(EchosEvent.RequestAudioPermission)
     }
 
     private fun toggleMoodFilter(moodUi: MoodUi) {
