@@ -27,11 +27,10 @@ import com.plcoding.echojournal.core.presentation.util.ObserveAsEvents
 import com.plcoding.echojournal.core.presentation.util.isAppInForeground
 import com.plcoding.echojournal.echos.presentation.echos.components.EchoFilterRow
 import com.plcoding.echojournal.echos.presentation.echos.components.EchoList
-import com.plcoding.echojournal.echos.presentation.echos.components.EchoRecordFloatingActionButton
+import com.plcoding.echojournal.echos.presentation.echos.components.EchoQuickRecordFloatingActionButton
 import com.plcoding.echojournal.echos.presentation.echos.components.EchoRecordingSheet
 import com.plcoding.echojournal.echos.presentation.echos.components.EchosEmptyBackground
 import com.plcoding.echojournal.echos.presentation.echos.components.EchosTopBar
-import com.plcoding.echojournal.echos.presentation.echos.models.AudioCaptureMethod
 import com.plcoding.echojournal.echos.presentation.echos.models.RecordingState
 import org.koin.androidx.compose.koinViewModel
 import timber.log.Timber
@@ -45,7 +44,7 @@ fun EchosRoot(
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { isGranted ->
-        if (isGranted && state.currentCaptureMethod == AudioCaptureMethod.STANDARD) {
+        if (isGranted) {
             viewModel.onAction(EchosAction.OnAudioPermissionGranted)
         }
     }
@@ -97,8 +96,15 @@ fun EchosScreen(
             )
         },
         floatingActionButton = {
-            EchoRecordFloatingActionButton(
-                onClick = { onAction(EchosAction.OnFabClick) }
+            EchoQuickRecordFloatingActionButton(
+                isQuickRecording = state.recordingState == RecordingState.QUICK_CAPTURE,
+                onClick = { onAction(EchosAction.OnRecordFabClick) },
+                onLongPressStart = { onAction(EchosAction.OnRecordFabLongClick) },
+                onLongPressEnd = { isCancelled ->
+                    if (isCancelled) onAction(EchosAction.OnCancelRecording)
+                    else onAction(EchosAction.OnCompleteRecordingClick)
+                },
+                modifier = Modifier,
             )
         }
     ) { innerPadding ->

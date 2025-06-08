@@ -58,12 +58,12 @@ class EchosViewModel(
 
     fun onAction(action: EchosAction) {
         when (action) {
-            EchosAction.OnFabClick -> {
+            EchosAction.OnRecordFabClick -> {
                 requestAudioPermission()
                 _state.update { it.copy(currentCaptureMethod = AudioCaptureMethod.STANDARD) }
             }
 
-            EchosAction.OnFabLongClick -> {
+            EchosAction.OnRecordFabLongClick -> {
                 requestAudioPermission()
                 _state.update { it.copy(currentCaptureMethod = AudioCaptureMethod.QUICK) }
             }
@@ -114,7 +114,11 @@ class EchosViewModel(
             EchosAction.OnPauseAudioClick -> {}
             is EchosAction.OnTrackSizeAvailable -> {}
 
-            EchosAction.OnAudioPermissionGranted -> startRecording(AudioCaptureMethod.STANDARD)
+            EchosAction.OnAudioPermissionGranted -> state.value.currentCaptureMethod?.let {
+                startRecording(
+                    it
+                )
+            }
 
             EchosAction.OnPauseRecordingClick -> {
                 voiceRecorder.pause()
