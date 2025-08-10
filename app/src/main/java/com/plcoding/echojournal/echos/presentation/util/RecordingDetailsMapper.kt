@@ -2,7 +2,6 @@ package com.plcoding.echojournal.echos.presentation.util
 
 import com.plcoding.echojournal.app.navigation.NavigationRoute
 import com.plcoding.echojournal.echos.domain.recording.RecordingDetails
-import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 
 fun RecordingDetails.toCreateEchoRoute(): NavigationRoute.CreateEcho {

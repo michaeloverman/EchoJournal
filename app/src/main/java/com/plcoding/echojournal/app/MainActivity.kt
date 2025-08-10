@@ -7,7 +7,6 @@ import androidx.activity.enableEdgeToEdge
 import androidx.navigation.compose.rememberNavController
 import com.plcoding.echojournal.app.navigation.NavigationRoot
 import com.plcoding.echojournal.core.presentation.designsystem.theme.EchoJournalTheme
-import com.plcoding.echojournal.echos.presentation.echos.EchosRoot
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

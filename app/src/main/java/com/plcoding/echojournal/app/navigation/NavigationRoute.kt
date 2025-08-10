@@ -1,7 +1,6 @@
 package com.plcoding.echojournal.app.navigation
 
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Serializer
 
 sealed interface NavigationRoute {
     @Serializable
