@@ -20,11 +20,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.plcoding.echojournal.R
 import com.plcoding.echojournal.core.presentation.designsystem.theme.EchoJournalTheme
 import com.plcoding.echojournal.core.presentation.designsystem.theme.bgGradient
 import com.plcoding.echojournal.core.presentation.util.ObserveAsEvents
 import com.plcoding.echojournal.core.presentation.util.isAppInForeground
+import com.plcoding.echojournal.echos.domain.recording.RecordingDetails
 import com.plcoding.echojournal.echos.presentation.echos.components.EchoFilterRow
 import com.plcoding.echojournal.echos.presentation.echos.components.EchoList
 import com.plcoding.echojournal.echos.presentation.echos.components.EchoQuickRecordFloatingActionButton
@@ -37,6 +39,7 @@ import timber.log.Timber
 
 @Composable
 fun EchosRoot(
+    onNavigateToCreateEcho: (RecordingDetails) -> Unit,
     viewModel: EchosViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -64,8 +67,8 @@ fun EchosRoot(
                 ).show()
             }
 
-            EchosEvent.OnRecordingDone -> {
-                Timber.d("recording completed")
+            is EchosEvent.OnRecordingDone -> {
+                onNavigateToCreateEcho(event.details)
             }
         }
     }

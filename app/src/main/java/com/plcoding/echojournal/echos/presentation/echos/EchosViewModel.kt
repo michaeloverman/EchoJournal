@@ -148,7 +148,7 @@ class EchosViewModel(
                 viewModelScope.launch {
                     eventChannel.send(
                         if (details.duration < MIN_RECORD_DURATION) EchosEvent.RecordingTooShort
-                        else EchosEvent.OnRecordingDone
+                        else EchosEvent.OnRecordingDone(details)
                     )
                 }
             }
