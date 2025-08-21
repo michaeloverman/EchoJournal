@@ -25,6 +25,7 @@ import com.plcoding.echojournal.echos.presentation.models.MoodUi
 import kotlin.random.Random
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 
 @Composable
 fun EchoMoodPlayer(
@@ -32,7 +33,8 @@ fun EchoMoodPlayer(
     playbackState: PlaybackState,
     playerProgress: () -> Float,
     totalPlaybackDuration: Duration,
-    powerRations: List<Float>,
+    durationPlayed: Duration,
+    powerRatios: List<Float>,
     onPlayClick: () -> Unit,
     onPauseClick: () -> Unit,
     onTrackSizeAvailable: (TrackSizeInfo) -> Unit,
@@ -40,8 +42,19 @@ fun EchoMoodPlayer(
     amplitudeBarWidth: Dp = 5.dp,
     amplitudeBarSpacing: Dp = 4.dp
 ) {
-    val formattedDuration = remember(playerProgress, totalPlaybackDuration) {
-        "${(totalPlaybackDuration * playerProgress().toDouble()).formatMMSS()}/${totalPlaybackDuration.formatMMSS()}"
+
+    /*
+    val iconTintColor
+    val trackFillColor
+    val backgroundColor
+    val trackColor
+     */
+
+//    val formattedDuration = remember(playerProgress, totalPlaybackDuration) {
+//        "${(totalPlaybackDuration * playerProgress().toDouble()).formatMMSS()}/${totalPlaybackDuration.formatMMSS()}"
+//    }
+    val formattedDuration = remember(durationPlayed, totalPlaybackDuration) {
+        "${durationPlayed.formatMMSS()}/${totalPlaybackDuration.formatMMSS()}"
     }
 
     Surface(
@@ -64,7 +77,7 @@ fun EchoMoodPlayer(
             EchoPlayBar(
                 amplitudeBarWidth = amplitudeBarWidth,
                 amplitudeBarSpacing = amplitudeBarSpacing,
-                powerRatios = powerRations,
+                powerRatios = powerRatios,
                 moodUi = moodUi?.colorSet ?: MoodColorSet.UNDEFINED_COLOR_SET,
                 playerProgress = playerProgress,
                 modifier = Modifier
@@ -88,11 +101,12 @@ private fun EchoMoodPlayerPreview() {
     val ratios = remember { List(30) { Random.nextFloat() } }
     EchoJournalTheme {
         EchoMoodPlayer(
-            moodUi = MoodUi.STRESSED,
+            moodUi = MoodUi.SAD,
             playbackState = PlaybackState.PLAYING,
             playerProgress = { .375f },
             totalPlaybackDuration = 5.minutes,
-            powerRations = ratios,
+            durationPlayed = 112.seconds,
+            powerRatios = ratios,
             onPlayClick = {},
             onPauseClick = {},
             onTrackSizeAvailable = {}

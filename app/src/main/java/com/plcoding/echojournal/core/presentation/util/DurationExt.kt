@@ -2,9 +2,10 @@ package com.plcoding.echojournal.core.presentation.util
 
 import java.util.Locale
 import kotlin.time.Duration
+import kotlin.time.DurationUnit
 
 fun Duration.formatMMSS(): String {
-    val totalSeconds = this.inWholeSeconds
+    val totalSeconds = this.toLong(DurationUnit.SECONDS)//.inWholeSeconds
     val minutes = totalSeconds / 60
     val seconds = totalSeconds % 60
     return String.format(

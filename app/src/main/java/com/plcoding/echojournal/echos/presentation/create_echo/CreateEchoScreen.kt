@@ -45,7 +45,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.plcoding.echojournal.R
 import com.plcoding.echojournal.core.presentation.designsystem.buttons.PrimaryButton
 import com.plcoding.echojournal.core.presentation.designsystem.buttons.SecondaryButton
@@ -175,8 +174,9 @@ fun CreateEchoScreen(
                 moodUi = state.mood,
                 playbackState = state.playbackState,
                 playerProgress = { state.durationPlayedRatio },
-                totalPlaybackDuration = state.durationPlayed,
-                powerRations = state.playbackAmplitudes,
+                totalPlaybackDuration = state.playbackTotalDuration,
+                durationPlayed = state.durationPlayed,
+                powerRatios = state.playbackAmplitudes,
                 onPlayClick = { onAction(CreateEchoAction.OnPlayAudioClick) },
                 onPauseClick = { onAction(CreateEchoAction.OnPauseAudioClick) },
                 onTrackSizeAvailable = { onAction(CreateEchoAction.OnTrackSizeAvailable(it)) },
