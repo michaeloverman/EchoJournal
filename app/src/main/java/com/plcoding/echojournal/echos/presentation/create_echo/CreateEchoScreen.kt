@@ -48,11 +48,13 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.plcoding.echojournal.R
 import com.plcoding.echojournal.core.presentation.designsystem.buttons.PrimaryButton
 import com.plcoding.echojournal.core.presentation.designsystem.buttons.SecondaryButton
+import com.plcoding.echojournal.core.presentation.designsystem.dropdowns.Selectable.Companion.asUnselectedItems
 import com.plcoding.echojournal.core.presentation.designsystem.text_fields.TransparentHintTextField
 import com.plcoding.echojournal.core.presentation.designsystem.theme.EchoJournalTheme
 import com.plcoding.echojournal.core.presentation.designsystem.theme.secondary70
 import com.plcoding.echojournal.core.presentation.designsystem.theme.secondary95
 import com.plcoding.echojournal.echos.presentation.components.EchoMoodPlayer
+import com.plcoding.echojournal.echos.presentation.components.EchoTopicRow
 import com.plcoding.echojournal.echos.presentation.create_echo.components.SelectMoodSheet
 import com.plcoding.echojournal.echos.presentation.models.MoodUi
 import org.koin.compose.viewmodel.koinViewModel
@@ -182,7 +184,17 @@ fun CreateEchoScreen(
                 onTrackSizeAvailable = { onAction(CreateEchoAction.OnTrackSizeAvailable(it)) },
             )
 
-            // TODO Insert topics flow row
+            EchoTopicRow(
+                topics = state.topics,
+                addTopicText = state.addTopicText,
+                showCreateTopicOption = state.showCreateTopicOption,
+                showTopicSuggestions = state.showTopicSuggestions,
+                searchResults = state.searchResults,
+                onTopicClick = { onAction(CreateEchoAction.OnTopicClick(it)) },
+                onRemoveTopicClick = { onAction(CreateEchoAction.OnRemoveTopicClick(it)) },
+                onDismissTopicSuggestions = { onAction(CreateEchoAction.OnDismissTopicSuggestions) },
+                onAddTopicTextChange = { onAction(CreateEchoAction.OnAddTopicTextChange(it)) },
+            )
 
             Row(
                 modifier = Modifier

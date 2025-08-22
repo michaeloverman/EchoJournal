@@ -52,4 +52,5 @@
     <string name="pause_recording">Pause recording</string>
     <string name="finish_recording">Finish recording</string>
     <string name="start_recording">Start recording</string>
+    <string name="remove_topic">Remove topic %s</string>
 </resources>
