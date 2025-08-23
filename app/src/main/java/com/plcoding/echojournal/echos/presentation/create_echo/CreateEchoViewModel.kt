@@ -36,11 +36,9 @@ class CreateEchoViewModel : ViewModel() {
 
     fun onAction(action: CreateEchoAction) {
         when (action) {
-            CreateEchoAction.OnCancelClick -> TODO()
             CreateEchoAction.OnConfirmMood -> onConfirmMood()
             CreateEchoAction.OnDismissMoodSelector -> onDismissMoodSelector()
             is CreateEchoAction.OnMoodClick -> onMoodClick(action.mood)
-            CreateEchoAction.OnNavigateBackClick -> TODO()
             is CreateEchoAction.OnNoteTextChange -> TODO()
             CreateEchoAction.OnPauseAudioClick -> TODO()
             CreateEchoAction.OnPlayAudioClick -> TODO()
@@ -54,7 +52,19 @@ class CreateEchoViewModel : ViewModel() {
             is CreateEchoAction.OnTitleTextChange -> TODO()
             is CreateEchoAction.OnTrackSizeAvailable -> TODO()
             CreateEchoAction.OnSelectMoodClick -> onSelectMoodClick()
+            CreateEchoAction.OnDismissConfirmLeaveDialog -> onDismissConfirmLeaveDialog()
+            CreateEchoAction.OnCancelClick,
+            CreateEchoAction.OnNavigateBackClick,
+            CreateEchoAction.OnGoBack -> onShowConfirmLeaveDialog()
         }
+    }
+
+    private fun onShowConfirmLeaveDialog() {
+        _state.update { it.copy(showConfirmLeaveDialog = true) }
+    }
+
+    private fun onDismissConfirmLeaveDialog() {
+        _state.update { it.copy(showConfirmLeaveDialog = false) }
     }
 
     @OptIn(FlowPreview::class)

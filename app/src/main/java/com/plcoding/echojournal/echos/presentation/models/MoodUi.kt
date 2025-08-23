@@ -91,8 +91,8 @@ enum class MoodUi(
 }
 
 data class MoodIconSet(
-    @DrawableRes val fill: Int,
-    @DrawableRes val outline: Int
+    @param:DrawableRes val fill: Int,
+    @param:DrawableRes val outline: Int
 )
 
 data class MoodColorSet(

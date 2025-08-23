@@ -53,4 +53,6 @@
     <string name="finish_recording">Finish recording</string>
     <string name="start_recording">Start recording</string>
     <string name="remove_topic">Remove topic %s</string>
+    <string name="discard_recording">Discard recording?</string>
+    <string name="cannot_be_undone">This can\'t be undone.</string>
 </resources>
