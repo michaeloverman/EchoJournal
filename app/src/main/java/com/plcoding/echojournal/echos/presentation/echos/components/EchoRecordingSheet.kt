@@ -128,7 +128,7 @@ fun SheetContent(
 
             EchoBubbleFloatingActionButton(
                 showBubble = isRecording,
-                onClick = if (isRecording) onPauseClick else onResumeClick,
+                onClick = if (isRecording) onCompleteRecording else onResumeClick,
                 icon = {
                     Icon(
                         imageVector = if (isRecording) Icons.Default.Check else Icons.Filled.Microphone,
