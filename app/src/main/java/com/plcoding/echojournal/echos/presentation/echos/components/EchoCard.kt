@@ -78,7 +78,7 @@ fun EchoCard(
                 onPlayClick = onPlayClick,
                 onPauseClick = onPauseClick,
                 onTrackSizeAvailable = onTrackSizeAvailable,
-                modifier = Modifier,
+//                modifier = Modifier,
 //                amplitudeBarWidth = TODO(),
 //                amplitudeBarSpacing = TODO()
             )

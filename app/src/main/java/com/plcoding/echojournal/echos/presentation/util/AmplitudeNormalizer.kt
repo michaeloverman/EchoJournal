@@ -34,7 +34,7 @@ object AmplitudeNormalizer {
         val outputRange = MAX_OUTPUT - MIN_OUTPUT
         val scaleFactor = MAX_OUTPUT - AMPLITUDE_MIN_OUTPUT_THRESHHOLD
         return amplitudes.map { amp ->
-            if (amp < AMPLITUDE_MIN_OUTPUT_THRESHHOLD) {
+            if (amp <= AMPLITUDE_MIN_OUTPUT_THRESHHOLD) {
                 MIN_OUTPUT
             } else {
                 val amplitudeRange = amp - AMPLITUDE_MIN_OUTPUT_THRESHHOLD

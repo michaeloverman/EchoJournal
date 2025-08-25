@@ -109,8 +109,7 @@ fun <T> SelectableDropDownOptionsMenu(
                                 .fillMaxWidth()
                                 .clip(RoundedCornerShape(8.dp))
                                 .background(MaterialTheme.colorScheme.surface)
-                                .clickable { it.onClick() }
-                                ,
+                                .clickable { it.onClick() },
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
                             Icon(

@@ -39,7 +39,7 @@ fun EchoPlayBar(
         val clipPath = Path()
 
         powerRatios.forEachIndexed { i, ratio ->
-            val height = (ratio * size.height).coerceAtLeast(amplitudeBarWidthPx)
+            val height = (ratio * size.height)//.coerceAtLeast(amplitudeBarWidthPx)
             val xOffset = i * (amplitudeBarWidthPx + amplitudeBarSpacingPx)
             val yTopStart = center.y - height / 2f
 
