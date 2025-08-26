@@ -12,6 +12,7 @@ data class EchoUi(
     val recordedAt: JavaInstant,
     val note: String?,
     val topics: List<String>,
+    val filepath: String,
     val amplitudes: List<Float>,
     val playbackTotalDuration: Duration,
     val playbackCurrentDuration: Duration = Duration.ZERO,

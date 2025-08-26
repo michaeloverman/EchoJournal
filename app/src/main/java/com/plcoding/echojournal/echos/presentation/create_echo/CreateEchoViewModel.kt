@@ -6,18 +6,22 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.plcoding.echojournal.app.navigation.NavigationRoute
 import com.plcoding.echojournal.core.presentation.designsystem.dropdowns.Selectable.Companion.asUnselectedItems
+import com.plcoding.echojournal.echos.domain.audio.AudioPlayer
 import com.plcoding.echojournal.echos.domain.recording.RecordingStorage
+import com.plcoding.echojournal.echos.presentation.echos.models.PlaybackState
 import com.plcoding.echojournal.echos.presentation.echos.models.TrackSizeInfo
 import com.plcoding.echojournal.echos.presentation.models.MoodUi
 import com.plcoding.echojournal.echos.presentation.util.AmplitudeNormalizer
 import com.plcoding.echojournal.echos.presentation.util.toRecordingDetails
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -26,10 +30,12 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlin.time.Duration
 
 class CreateEchoViewModel(
     savedStateHandle: SavedStateHandle,
-    val recordingStorage: RecordingStorage
+    private val recordingStorage: RecordingStorage,
+    private val audioPlayer: AudioPlayer
 ) : ViewModel() {
 
     private var hasLoadedInitialData = false
@@ -40,7 +46,9 @@ class CreateEchoViewModel(
     private val eventChannel = Channel<CreateEchoEvent>()
     val events = eventChannel.receiveAsFlow()
 
-    private val _state = MutableStateFlow(CreateEchoState())
+    private val _state = MutableStateFlow(CreateEchoState(
+        playbackTotalDuration = recordingDetails.duration
+    ))
     val state = _state
         .onStart {
             if (!hasLoadedInitialData) {
@@ -54,14 +62,16 @@ class CreateEchoViewModel(
             initialValue = CreateEchoState()
         )
 
+    private var durationJob: Job? = null
+
     fun onAction(action: CreateEchoAction) {
         when (action) {
             CreateEchoAction.OnConfirmMood -> onConfirmMood()
             CreateEchoAction.OnDismissMoodSelector -> onDismissMoodSelector()
             is CreateEchoAction.OnMoodClick -> onMoodClick(action.mood)
             is CreateEchoAction.OnNoteTextChange -> onNoteTextChange(action.text)
-            CreateEchoAction.OnPauseAudioClick -> {}
-            CreateEchoAction.OnPlayAudioClick -> {}
+            CreateEchoAction.OnPauseAudioClick -> audioPlayer.pause()
+            CreateEchoAction.OnPlayAudioClick -> onPlayClick()
 
             is CreateEchoAction.OnAddTopicTextChange -> onAddTopicChange(action.text)
             is CreateEchoAction.OnRemoveTopicClick -> onRemoveTopic(action.topic)
@@ -76,7 +86,38 @@ class CreateEchoViewModel(
             CreateEchoAction.OnCancelClick,
             CreateEchoAction.OnNavigateBackClick,
             CreateEchoAction.OnGoBack -> onShowConfirmLeaveDialog()
+
             CreateEchoAction.OnDismissConfirmLeaveDialog -> onDismissConfirmLeaveDialog()
+        }
+    }
+
+    private fun onPlayClick() {
+        if (state.value.playbackState == PlaybackState.PAUSED) {
+            audioPlayer.resume()
+        } else {
+            audioPlayer.play(
+                filePath = recordingDetails.filePath ?: throw IllegalArgumentException(
+                    "Filepath can't be null"
+                ),
+                onComplete = {
+                    _state.update { it.copy(
+                        playbackState = PlaybackState.STOPPED,
+                        durationPlayed = Duration.ZERO
+                    ) }
+                }
+            )
+
+            durationJob?.cancel()
+            durationJob = audioPlayer
+                .activeTrack
+                .filterNotNull()
+                .onEach { track ->
+                    _state.update { it.copy(
+                        playbackState = if (track.isPlaying) PlaybackState.PLAYING else PlaybackState.PAUSED,
+                        durationPlayed = track.durationPlayed
+                    ) }
+                }
+                .launchIn(viewModelScope)
         }
     }
 
@@ -84,13 +125,15 @@ class CreateEchoViewModel(
         viewModelScope.launch(Dispatchers.Default) {
             val finalAmplitudes = AmplitudeNormalizer.normalize(
                 source = recordingDetails.amplitudes,
-                trackWidth =  trackSizeInfo.trackWidth,
+                trackWidth = trackSizeInfo.trackWidth,
                 barWidth = trackSizeInfo.barWidth,
                 spacing = trackSizeInfo.spacing
             )
-            _state.update { it.copy(
-                playbackAmplitudes = finalAmplitudes
-            ) }
+            _state.update {
+                it.copy(
+                    playbackAmplitudes = finalAmplitudes
+                )
+            }
         }
     }
 
@@ -131,10 +174,12 @@ class CreateEchoViewModel(
             .distinctUntilChanged()
             .debounce(300)
             .onEach { query ->
-                _state.update { it.copy(
-                    showTopicSuggestions = query.isNotBlank() && query.trim() !in it.topics,
-                    searchResults = listOf("hello", "helloworld").asUnselectedItems()
-                ) }
+                _state.update {
+                    it.copy(
+                        showTopicSuggestions = query.isNotBlank() && query.trim() !in it.topics,
+                        searchResults = listOf("hello", "helloworld").asUnselectedItems()
+                    )
+                }
             }
             .launchIn(viewModelScope)
     }
@@ -148,36 +193,46 @@ class CreateEchoViewModel(
     }
 
     private fun onTopicClick(topic: String) {
-        _state.update { it.copy(
-            addTopicText = "",
-            topics = (it.topics + topic).distinct()
-        ) }
+        _state.update {
+            it.copy(
+                addTopicText = "",
+                topics = (it.topics + topic).distinct()
+            )
+        }
     }
 
     private fun onAddTopicChange(text: String) {
-        _state.update { state -> state.copy(
-            addTopicText = text.filter { it.isLetterOrDigit() }
-        ) }
+        _state.update { state ->
+            state.copy(
+                addTopicText = text.filter { it.isLetterOrDigit() }
+            )
+        }
     }
 
     private fun onConfirmMood() {
-        _state.update { it.copy(
-            mood = it.selectedMood,
-            canSaveEcho = it.titleText.isNotBlank(),
-            showMoodSelector = false
-        ) }
+        _state.update {
+            it.copy(
+                mood = it.selectedMood,
+                canSaveEcho = it.titleText.isNotBlank(),
+                showMoodSelector = false
+            )
+        }
     }
 
     private fun onDismissMoodSelector() {
-        _state.update { it.copy(
-            showMoodSelector = false
-        ) }
+        _state.update {
+            it.copy(
+                showMoodSelector = false
+            )
+        }
     }
 
     private fun onMoodClick(mood: MoodUi) {
-        _state.update { it.copy(
-            selectedMood = mood,
-        ) }
+        _state.update {
+            it.copy(
+                selectedMood = mood,
+            )
+        }
     }
 
     private fun onSelectMoodClick() {

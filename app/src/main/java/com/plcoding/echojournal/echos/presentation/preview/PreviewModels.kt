@@ -18,6 +18,7 @@ data object PreviewUi {
         recordedAt = Instant.now() - 15.minutes.toJavaDuration(),
         note = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
         topics = listOf("Work", "Play", "Home", "Family"),
+        filepath = "path.to.file/music",
         amplitudes = List(50) { Random.nextFloat() },
         playbackTotalDuration = 5.minutes,
         playbackCurrentDuration = ZERO,
